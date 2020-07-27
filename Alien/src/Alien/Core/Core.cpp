@@ -2,10 +2,8 @@
 #include "pch.h"
 
 #include "Core.h"
-
 #include "Log.h"
-
-#include <Windows.h>
+//#include <Windows.h>
 
 #define ALIEN_BUILD_ID "v0.1a"
 
@@ -15,7 +13,7 @@ namespace Alien {
 	{
 		Alien::Log::Init();
 
-		ALIEN_CORE_TRACE("Hazel Engine {}", ALIEN_BUILD_ID);
+		ALIEN_CORE_TRACE("Alien Engine {}", ALIEN_BUILD_ID);
 		ALIEN_CORE_TRACE("Initializing...");
 	}
 
@@ -26,6 +24,7 @@ namespace Alien {
 
 }
 
+#if 0
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,
 	LPVOID lpReserved
@@ -45,3 +44,4 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	}
 	return TRUE;
 }
+#endif

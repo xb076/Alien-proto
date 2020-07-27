@@ -12,11 +12,12 @@
 #include <functional>
 #include <algorithm>
 
+#include <sstream>
 #include <fstream>
 
 //#include <Alien/Core/Base.h>
 #include <Alien/Core/Log.h>
-#include <Alien/Core/Events/Event.h>
+#include <Alien/Events/Event.h>
 
 // Math
 //#include <Alien/Core/Math/Mat4.h>

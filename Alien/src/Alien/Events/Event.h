@@ -1,17 +1,23 @@
 #pragma once
 
-#include <functional>
+#include "pch.h"
 #include "Alien/Core/Core.h"
+#include "Alien/Core/Log.h"
 
 namespace Alien {
+
+	// Events in Alien are currently blocking, meaning when an event occurs it
+	// immediately gets dispatched and must be dealt with right then an there.
+	// For the future, a better strategy might be to buffer events in an event
+	// bus and process them during the "event" part of the update stage.
 
 	enum class EventType
 	{
 		None = 0,
-		WindowClosed, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
+		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
 		KeyPressed, KeyReleased,
-		MouseButtonPressed, MouseButtonReleased, MouseMoved
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
 	enum EventCategory
@@ -30,6 +36,7 @@ namespace Alien {
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
+
 	class Alien_API Event
 	{
 		friend class EventDispatcher;
@@ -37,6 +44,7 @@ namespace Alien {
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
+		virtual std::string ToString() const { return GetName(); }
 
 		inline bool IsInCategory(EventCategory category)
 		{
@@ -70,5 +78,9 @@ namespace Alien {
 		Event& m_Event;
 	};
 
+	inline std::ostream& operator<<(std::ostream& os, const Event& e)
+	{
+		return os << e.ToString();
+	}
 }
 

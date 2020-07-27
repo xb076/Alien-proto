@@ -1,6 +1,9 @@
 #pragma once
 
+
 #include "Alien/Core/Window.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Alien {
 
@@ -10,18 +13,31 @@ namespace Alien {
 		WindowsWindow(const WindowProps& props);
 		virtual ~WindowsWindow();
 
-		inline void SetEventCallback(const EventCallbackFn& callback) override { m_EventCallbackFn = callback; }
+		void OnUpdate() override;
 
-		inline unsigned int GetWidth() const override { return m_Width; }
-		inline unsigned int GetHeight() const override { return m_Height; }
-	protected:
-		virtual void Init(const WindowProps& props) override;
-		virtual void Shutdown() override;
+		inline unsigned int GetWidth() const override { return m_Data.Width; }
+		inline unsigned int GetHeight() const override { return m_Data.Height; }
+
+		// Window attributes
+		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+		void SetVSync(bool enabled) override;
+		bool IsVSync() const override;
 	private:
-		std::string m_Title;
-		unsigned int m_Width, m_Height;
+		virtual void Init(const WindowProps& props);
+		virtual void Shutdown();
+	private:
+		GLFWwindow* m_Window;
 
-		EventCallbackFn m_EventCallbackFn;
+		struct WindowData
+		{
+			std::string Title;
+			unsigned int Width, Height;
+			bool VSync;
+
+			EventCallbackFn EventCallback;
+		};
+
+		WindowData m_Data;
 	};
 
 }
