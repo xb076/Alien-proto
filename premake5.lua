@@ -14,6 +14,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "Alien/vendor/GLFW/include"
 IncludeDir["Glad"] = "Alien/vendor/Glad/include"
+IncludeDir["spdlog"] = "Alien/vendor/spdlog/include"
 IncludeDir["ImGui"] = "Alien/vendor/imgui"
 IncludeDir["glm"] = "Alien/vendor/glm"
 IncludeDir["stb_image"] = "Alien/vendor/stb_image"
@@ -53,6 +54,7 @@ project "Alien"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.spdlog}",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/stb/include"
 	}
@@ -99,8 +101,8 @@ project "Editor"
 	cppdialect "C++17"
 	staticruntime "on"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("_bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("_bin-int/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{
@@ -153,8 +155,8 @@ project "Sandbox"
 	cppdialect "C++17"
 	staticruntime "on"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}" )
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}" )
+	targetdir ("_bin/" .. outputdir .. "/%{prj.name}" )
+	objdir ("_bin-int/" .. outputdir .. "/%{prj.name}" )
 
 	files
 	{
@@ -180,7 +182,7 @@ project "Sandbox"
 
 		defines
 		{
-			"ENGINE_PLATFORM_WINDOWS"
+			"ALIEN_PLATFORM_WINDOWS"
 		}
 
 	filter "configurations:Debug"
