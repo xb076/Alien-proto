@@ -1,0 +1,2 @@
+D:\PROJECTS\ENGINE\Alien-proto\Alien\vendor\Glad\_bin\Debug-windows-x86_64\Glad\Glad.pdb
+D:\PROJECTS\ENGINE\Alien-proto\Alien\vendor\Glad\_bin-int\Debug-windows-x86_64\Glad\Glad.pdb
