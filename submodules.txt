@@ -1,0 +1,4 @@
+git submodule add https://github.com/xb076/glfw Alien/vendor/GLFW
+git submodule add https://github.com/xb076/imgui Alien/vendor/imgui
+git submodule add https://github.com/xb076/glm-deprecated Alien/vendor/glm
+git submodule add https://github.com/gabime/spdlog Alien/vendor/spdlog
