@@ -2,8 +2,9 @@
 
 #include "Alien/Core/Window.h"
 #include "Alien/Core/LayerStack.h"
-
 #include "Alien/Events/ApplicationEvent.h"
+
+#include "Alien/ImGui/ImGuiLayer.h"
 
 namespace Alien {
 
@@ -31,7 +32,8 @@ namespace Alien {
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:
-		std::unique_ptr<Window> m_Window;
+		Scope<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
