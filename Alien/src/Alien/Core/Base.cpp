@@ -1,7 +1,7 @@
 
 #include "pch.h"
 
-#include "Core.h"
+#include "Base.h"
 #include "Log.h"
 //#include <Windows.h>
 

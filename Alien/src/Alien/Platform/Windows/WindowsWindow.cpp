@@ -1,11 +1,12 @@
 #include "pch.h"
+#include <glad/glad.h>
 #include "WindowsWindow.h"
-
-#include "Alien/Core/Log.h"
 
 #include "Alien/Events/ApplicationEvent.h"
 #include "Alien/Events/KeyEvent.h"
 #include "Alien/Events/MouseEvent.h"
+
+#include <imgui.h>
 
 namespace Alien {
 
@@ -42,7 +43,7 @@ namespace Alien {
 		{
 			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
-			ALIEN_ASSERT(success, "Could not intialize GLFW!");
+			ALIEN_CORE_ASSERT(success, "Could not intialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 
 			s_GLFWInitialized = true;
@@ -50,6 +51,8 @@ namespace Alien {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		ALIEN_CORE_ASSERT(status, "Failed to initialize Glad!");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
@@ -99,6 +102,14 @@ namespace Alien {
 				}
 			});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint)
+			{
+				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+
+				KeyTypedEvent event((int)codepoint);
+				data.EventCallback(event);
+			});
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
@@ -135,6 +146,15 @@ namespace Alien {
 				MouseMovedEvent event((float)x, (float)y);
 				data.EventCallback(event);
 			});
+
+		m_ImGuiMouseCursors[ImGuiMouseCursor_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+		m_ImGuiMouseCursors[ImGuiMouseCursor_TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeAll] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);   // FIXME: GLFW doesn't have this.
+		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeNESW] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);  // FIXME: GLFW doesn't have this.
+		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeNWSE] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);  // FIXME: GLFW doesn't have this.
+		m_ImGuiMouseCursors[ImGuiMouseCursor_Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 	}
 
 	void WindowsWindow::Shutdown()
@@ -146,6 +166,10 @@ namespace Alien {
 	{
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
+
+		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+		glfwSetCursor(m_Window, m_ImGuiMouseCursors[imgui_cursor] ? m_ImGuiMouseCursors[imgui_cursor] : m_ImGuiMouseCursors[ImGuiMouseCursor_Arrow]);
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

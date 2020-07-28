@@ -1,4 +1,5 @@
 #include "Alien.h"
+#include "Alien/ImGui/ImGuiLayer.h"
 
 class Sandbox : public Alien::Application
 {
@@ -9,6 +10,12 @@ public:
 		ALIEN_INFO("Message Info!");
 		ALIEN_WARN("Message Warn!");
 		ALIEN_ERROR("Message Error!");
+	}
+
+	virtual void OnInit() override
+	{
+		PushOverlay(new Alien::ImGuiLayer());
+
 	}
 };
 

@@ -20,13 +20,16 @@ namespace Alien {
 
 		// Window attributes
 		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-		void SetVSync(bool enabled) override;
-		bool IsVSync() const override;
+		void SetVSync(bool enabled);
+		bool IsVSync() const;
+
+		inline GLFWwindow* GetGLFWWindow() const { return m_Window; }
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
+		GLFWcursor* m_ImGuiMouseCursors[9] = { 0 };
 
 		struct WindowData
 		{
@@ -39,5 +42,6 @@ namespace Alien {
 
 		WindowData m_Data;
 	};
+
 
 }
