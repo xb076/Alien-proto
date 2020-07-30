@@ -9,5 +9,6 @@
 #include "Alien/Events/MouseEvent.h"
 
 // ---Entry Point------------
-#include "Alien/EntryPoint.h"
+#include "Alien/Core/EntryPoint.h"
 // --------------------------
+

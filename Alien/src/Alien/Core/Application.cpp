@@ -3,6 +3,9 @@
 
 #include <GLFW/glfw3.h>
 
+
+
+
 namespace Alien {
 
 #define BIND_EVENT_FN_APPLICATION(fn) std::bind(&Application::##fn, this, std::placeholders::_1)

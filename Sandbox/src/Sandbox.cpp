@@ -14,16 +14,16 @@ public:
 		glGenBuffers(1, &m_VertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 
-		float vertices[3 * 3] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f
+		float vertices[3 * 7] = {
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+			0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f
 		};
 
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), nullptr);
 
 		glGenBuffers(1, &m_IndexBuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
@@ -63,6 +63,8 @@ private:
 	unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
 
 };
+
+
 
 
 class Sandbox : public Alien::Application
