@@ -1,13 +1,12 @@
 #pragma once
-
-#include "Alien/Core/Base.h"
+#include "Base.h"
 
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/bundled/ostream.h"
 
 namespace Alien {
 
-	class Alien_API Log
+	class Log
 	{
 	public:
 		static void Init();

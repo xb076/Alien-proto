@@ -74,6 +74,7 @@ project "Alien"
 		defines
 		{
 			"ALIEN_PLATFORM_WINDOWS",
+			"GLFW_INCLUDE_NONE",
 			"ALIEN_BUILD_DLL"
 
 		}
