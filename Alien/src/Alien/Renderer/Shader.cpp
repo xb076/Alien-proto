@@ -1,11 +1,50 @@
 #include "pch.h"
 #include "Shader.h"
+#include "Renderer.h"
+#include "RendererAPI.h"
 
-#include <glad/glad.h>
+#include "Alien/Platform/OpenGL/OpenGLShader.h"
 
 
 namespace Alien {
 
+	Alien::Ref<Shader> Shader::Create(const std::string& filepath)
+	{
+		Ref<Shader> ret = nullptr;
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			ALIEN_CORE_ASSERT(false, "RenderAPI::None is currently not supported!");
+			break;
+		case RendererAPI::API::OpenGL:
+			ret = CreateRef<OpenGLShader>(filepath);
+			break;
+		default:
+			ALIEN_CORE_ASSERT(false, "Unkown RenderAPI!");
+			break;
+		}
+		return ret;
+	}
+
+	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+	{
+		Ref<Shader> ret = nullptr;
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			ALIEN_CORE_ASSERT(false, "RenderAPI::None is currently not supported!");
+			break;
+		case RendererAPI::API::OpenGL:
+			ret = CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			break;
+		default:
+			ALIEN_CORE_ASSERT(false, "Unkown RenderAPI!");
+			break;
+		}
+		return ret;
+	}
+
+#if 0
 	Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 
@@ -134,6 +173,6 @@ namespace Alien {
 	{
 		glUseProgram(0);
 	}
-
+#endif
 }
 

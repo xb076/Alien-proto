@@ -2,6 +2,7 @@
 
 #include "Alien/Core/Window.h"
 #include "Alien/Core/LayerStack.h"
+#include "Alien/Core/TimeStep.h"
 #include "Alien/Events/ApplicationEvent.h"
 
 #include "Alien/ImGui/ImGuiLayer.h"
@@ -38,6 +39,16 @@ namespace Alien {
 		LayerStack m_LayerStack;
 
 		static Application* s_Instance;
+		Timestep m_Timestep;
+		float m_LastFrameTime = 0.0f;
+
+		struct ProfileResult
+		{
+			const char* Name;
+			float Time;
+		};
+
+		std::vector<ProfileResult> m_ProfileResults;
 
 	};
 

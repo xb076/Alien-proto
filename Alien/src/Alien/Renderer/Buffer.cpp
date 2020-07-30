@@ -7,7 +7,7 @@
 
 namespace Alien {
 
-	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
+	VertexBuffer* VertexBuffer::Create()
 	{
 		VertexBuffer* ret = nullptr;
 		switch (Renderer::GetAPI())
@@ -16,7 +16,7 @@ namespace Alien {
 			ALIEN_CORE_ASSERT(false, "RenderAPI::None is currently not supported!");
 			break;
 		case RendererAPI::API::OpenGL:
-			ret = new OpenGLVertexBuffer(vertices, size);
+			ret = new OpenGLVertexBuffer();
 			break;
 		default:
 			ALIEN_CORE_ASSERT(false, "Unkown RenderAPI!");
@@ -25,7 +25,7 @@ namespace Alien {
 		return ret;
 	}
 
-	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size)
+	IndexBuffer* IndexBuffer::Create()
 	{
 		IndexBuffer* ret = nullptr;
 		switch (Renderer::GetAPI())
@@ -34,7 +34,7 @@ namespace Alien {
 			ALIEN_CORE_ASSERT(false, "RenderAPI::None is currently not supported!");
 			break;
 		case RendererAPI::API::OpenGL:
-			ret = new OpenGLIndexBuffer(indices, size);
+			ret = new OpenGLIndexBuffer();
 			break;
 		default:
 			ALIEN_CORE_ASSERT(false, "Unkown RenderAPI!");
