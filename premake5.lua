@@ -169,7 +169,8 @@ project "Sandbox"
 		"Alien/vendor/spdlog/include",
 		"Alien/src",
 		"Alien/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links
