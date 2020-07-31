@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "Application.h"
 
+
 #include "imgui/imgui.h"
 #include <glad/glad.h>
-
-
 
 
 namespace Alien {
@@ -36,6 +35,7 @@ namespace Alien {
 			m_Stopped = true;
 
 			float duration = (end - start) * 0.001f;
+			//float duration = std::chrono::duration_cast<std::chrono::microseconds>(endTimepoint - m_StartTimepoint).count() * 0.001f;
 			m_Func({ m_Name, duration });
 		}
 
@@ -64,6 +64,7 @@ namespace Alien {
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
+		Renderer::Init();
 	}
 
 	Application::~Application()
@@ -94,11 +95,13 @@ namespace Alien {
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;*/
 
-			glClearColor(1, 0, 1, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			//glClearColor(1, 0, 1, 1);
+			//glClear(GL_COLOR_BUFFER_BIT);
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			Renderer::WaitAndRender();
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
@@ -117,6 +120,8 @@ namespace Alien {
 
 			m_ImGuiLayer->End();
 
+			
+			
 			m_Window->OnUpdate();
 		}
 		OnShutdown();

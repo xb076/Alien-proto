@@ -1,17 +1,33 @@
 #pragma once
-#include "RenderCommand.h"
+
+#include "RendererAPI.h"
+//#include "RenderCommand.h"
+#include "RenderCommandQueue.h"
+#include "Shader.h"
+#include "Buffer.h"
 
 namespace Alien {
 
 	class Renderer
 	{
 	public:
+		typedef void(*RenderCommandFn)(void*);
+
+		static void Init();
 		static void BeginScene();
 		static void EndScene();
 
-		static void Submit(const Ref<VertexArray>& vertexArray);
+		static void SetClearColor(const glm::vec4& color);
+		static void Clear();
+		static void Draw(const Ref<VertexArray>& vertexArray);
+		static void* Submit(RenderCommandFn fn, unsigned int size);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+
+		static void WaitAndRender();
+	private:
+		//static Renderer* s_Instance;
+		
 	};
 
 

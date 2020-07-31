@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "OpenGLShader.h"
-
+#include "Alien/Renderer/Renderer.h"
 #include <fstream>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -21,12 +21,19 @@ namespace Alien {
 	}
 
 
-	OpenGLShader::OpenGLShader(const std::string& filepath)
+	OpenGLShader::OpenGLShader(const std::string& filepath) : m_RendererID(0)
 	{
 
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
-		Compile(shaderSources);
+
+		ALIEN_RENDER_S1(shaderSources, {
+			if (self->m_RendererID)
+				glDeleteShader(self->m_RendererID);
+
+			self->Compile(shaderSources);
+			ALIEN_CORE_INFO("OpenGLShader() m_RendererID<{0}>", self->m_RendererID);
+		});
 
 		//  assets/shaders/Texture.glsl
 		auto lastSlash = filepath.find_last_of("/\\");
@@ -39,59 +46,92 @@ namespace Alien {
 	}
 
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc)
-		: m_Name(name)
+		: m_Name(name), m_RendererID(0)
 	{
 
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
-		Compile(sources);
+
+		ALIEN_RENDER_S1(sources, {
+			if (self->m_RendererID)
+				glDeleteShader(self->m_RendererID);
+
+			self->Compile(sources);
+			ALIEN_CORE_INFO("OpenGLShader() m_RendererID<{0}>", self->m_RendererID);
+		});
 
 	}
 
 	OpenGLShader::~OpenGLShader()
 	{
-		glDeleteProgram(m_RendererID);
+		ALIEN_RENDER_S({
+			ALIEN_CORE_INFO("~OpenGLShader() m_RendererID<{0}>", self->m_RendererID);
+			glDeleteProgram(self->m_RendererID);
+		
+		});
 	}
 
 	void OpenGLShader::Bind() const
 	{
-		glUseProgram(m_RendererID);
+		ALIEN_RENDER_S({
+			ALIEN_CORE_INFO("OpenGLShader::Bind() m_RendererID<{0}>", self->m_RendererID);
+			if(self->m_RendererID)
+				glUseProgram(self->m_RendererID);
+			else
+				ALIEN_CORE_ERROR("OpenGLShader m_RendererID is 0;");
+		});
 	}
 
 	void OpenGLShader::UnBind() const
 	{
-		glUseProgram(0);
+		ALIEN_RENDER({
+			ALIEN_CORE_INFO("OpenGLShader::UnBind()");
+			glUseProgram(0);
+		});
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
-		UploadUniformInt(name, value);
+		ALIEN_RENDER_S2(name, value, {
+			self->UploadUniformInt(name, value);
+		});
 	}
 
 	void OpenGLShader::SetIntArray(const std::string& name, uint32_t* values, uint32_t count)
 	{
-		UploadUniformIntArray(name, values, count);
+		ALIEN_RENDER_S3(name, values, count, {
+			self->UploadUniformIntArray(name, values, count);
+		});
 	}
 
 	void OpenGLShader::SetFloat(const std::string& name, float value)
 	{
-		UploadUniformFloat(name, value);
+		ALIEN_RENDER_S2(name, value, {
+			self->UploadUniformFloat(name, value);
+		});
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
-		UploadUniformFloat3(name, value);
+		ALIEN_RENDER_S2(name, value, {
+			ALIEN_CORE_INFO("OpenGLShader::SetFloat3, m_RendererID<{0}>", self->m_RendererID);
+			self->UploadUniformFloat3(name, value);
+		});
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
-		UploadUniformFloat4(name, value);
+		ALIEN_RENDER_S2(name, value, {
+			self->UploadUniformFloat4(name, value);
+		});
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
-		UploadUniformMat4(name, value);
+		ALIEN_RENDER_S2(name, value, {
+			self->UploadUniformMat4(name, value);
+		});
 	}
 
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)

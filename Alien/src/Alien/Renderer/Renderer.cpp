@@ -3,6 +3,27 @@
 
 namespace Alien {
 
+	struct RendererData
+	{
+		//Ref<RenderPass> m_ActiveRenderPass;
+		Scope<RenderCommandQueue> m_CommandQueue;
+		Scope<ShaderLibrary> m_ShaderLibrary;
+		Scope<RendererAPI> m_RendererAPI;
+		//Ref<VertexArray> m_FullscreenQuadVertexArray;
+	};
+
+	static RendererData s_Data;
+
+	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
+
+	void Renderer::Init()
+	{
+		//s_Instance = new Renderer();
+		s_Data.m_RendererAPI.reset(RendererAPI::Create());
+		s_Data.m_ShaderLibrary = CreateScope<ShaderLibrary>();
+		s_Data.m_CommandQueue = CreateScope<RenderCommandQueue>();
+	}
+
 	void Renderer::BeginScene()
 	{
 
@@ -13,10 +34,25 @@ namespace Alien {
 
 	}
 
-	void Renderer::Submit(const Ref<VertexArray>& vertexArray)
+	void Renderer::SetClearColor(const glm::vec4& color) { s_Data.m_RendererAPI->SetClearColor(color); }
+	void Renderer::Clear() { s_Data.m_RendererAPI->Clear(); }
+
+	void Renderer::Draw(const Ref<VertexArray>& vertexArray)
 	{
 		vertexArray->Bind();
-		RenderCommand::DrawIndexed(vertexArray);
+		s_Data.m_RendererAPI->DrawIndexed(vertexArray);
+	}
+
+	void* Renderer::Submit(RenderCommandFn fn, unsigned int size)
+	{
+		return s_Data.m_CommandQueue->Allocate(fn, size);
+	}
+
+	void Renderer::WaitAndRender()
+	{
+		s_Data.m_CommandQueue->Execute();
 	}
 
 }
+
+

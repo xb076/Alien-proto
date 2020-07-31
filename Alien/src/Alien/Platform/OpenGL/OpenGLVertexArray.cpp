@@ -2,6 +2,7 @@
 #include "OpenGLVertexArray.h"
 
 #include <glad/glad.h>
+#include "Alien/Renderer/Renderer.h"
 
 namespace Alien {
 
@@ -25,36 +26,52 @@ namespace Alien {
 		return ret;
 	}
 
-	OpenGLVertexArray::OpenGLVertexArray()
+	OpenGLVertexArray::OpenGLVertexArray() : m_RendererID(0)
 	{
-		glCreateVertexArrays(1, &m_RendererID);
+		ALIEN_RENDER_S({
+			glCreateVertexArrays(1, &self->m_RendererID);
+			ALIEN_CORE_INFO("OpenGLVertexArray() m_RendererID<{0}>", self->m_RendererID);
+		});
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
-		glDeleteVertexArrays(1, &m_RendererID);
+		ALIEN_RENDER_S({
+			ALIEN_CORE_INFO("~OpenGLVertexArray() m_RendererID<{0}>", self->m_RendererID);
+			glDeleteVertexArrays(1, &self->m_RendererID);
+		});
 	}
 
 	void OpenGLVertexArray::Bind() const
 	{
-		glBindVertexArray(m_RendererID);
+		ALIEN_RENDER_S({
+			ALIEN_CORE_INFO("OpenGLVertexArray::Bind() m_RendererID<{0}>", self->m_RendererID);
+			if(self->m_RendererID)
+				glBindVertexArray(self->m_RendererID);
+			else
+				ALIEN_CORE_ERROR("OpenGLVertexArray m_RendererID is 0;");
+		});
 	}
 
 	void OpenGLVertexArray::UnBind() const
 	{
-		glBindVertexArray(0);
+		ALIEN_RENDER({
+			ALIEN_CORE_INFO("OpenGLVertexArray::UnBind()");
+			glBindVertexArray(0);
+		});
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		ALIEN_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		
-		glBindVertexArray(m_RendererID);
+		Bind();
 		vertexBuffer->Bind();
 
-
+		ALIEN_RENDER_1(vertexBuffer, {
+		ALIEN_CORE_INFO("OpenGLVertexArray::AddVertexBuffer()");
 		uint32_t index = 0;
-		const auto& layout = vertexBuffer->GetLayout();
+		const auto & layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
 			glEnableVertexAttribArray(index);
@@ -67,13 +84,14 @@ namespace Alien {
 			);
 			++index;
 		}
+		});
 
 		m_VertexBuffers.push_back(vertexBuffer);
 	}
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
-		glBindVertexArray(m_RendererID);
+		Bind();
 		indexBuffer->Bind();
 
 		m_IndexBuffer = indexBuffer;

@@ -19,9 +19,11 @@ namespace Alien {
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 
-		inline static API GetAPI() { return s_RendererAPI; }
+		inline static API GetAPI() { return s_API; }
+
+		static RendererAPI* Create();
 	private:
-		static API s_RendererAPI;
+		static API s_API;
 	};
 
 }

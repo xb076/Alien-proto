@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Alien/Renderer/Buffer.h"
 #include "Alien/Renderer/VertexArray.h"
 
 namespace Alien {

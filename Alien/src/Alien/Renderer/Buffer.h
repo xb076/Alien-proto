@@ -113,6 +113,8 @@ namespace Alien {
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
 		static VertexBuffer* Create();
+
+		Ref<char> m_Buffer;
 	};
 
 	class IndexBuffer
@@ -127,6 +129,8 @@ namespace Alien {
 		virtual uint32_t GetCount() const = 0;
 
 		static IndexBuffer* Create();
+
+		Ref<char> m_Buffer;
 	};
 
 }

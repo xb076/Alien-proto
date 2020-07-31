@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Alien/Core/Base.h"
 #include "Shader.h"
 #include "Renderer.h"
 #include "RendererAPI.h"
@@ -43,6 +44,42 @@ namespace Alien {
 		}
 		return ret;
 	}
+
+	ShaderLibrary::ShaderLibrary()
+	{
+	}
+
+	ShaderLibrary::~ShaderLibrary()
+	{
+	}
+
+	void ShaderLibrary::Add(const Ref<Shader>& shader)
+	{
+		auto& name = shader->GetName();
+		ALIEN_CORE_ASSERT(m_Shaders.find(name) == m_Shaders.end(), "No Shader name found!");
+		m_Shaders[name] = shader;
+	}
+
+	void ShaderLibrary::Load(const std::string& path)
+	{
+		auto shader = Ref<Shader>(Shader::Create(path));
+		auto& name = shader->GetName();
+		ALIEN_CORE_ASSERT(m_Shaders.find(name) == m_Shaders.end(), "No Shader name found!");
+		m_Shaders[name] = shader;
+	}
+
+	void ShaderLibrary::Load(const std::string& name, const std::string& path)
+	{
+		ALIEN_CORE_ASSERT(m_Shaders.find(name) == m_Shaders.end(), "No Shader name found!");
+		m_Shaders[name] = Ref<Shader>(Shader::Create(path));
+	}
+
+	Ref<Shader>& ShaderLibrary::Get(const std::string& name)
+	{
+		ALIEN_CORE_ASSERT(m_Shaders.find(name) != m_Shaders.end(), "No Shader name found!");
+		return m_Shaders[name];
+	}
+
 
 #if 0
 	Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc)

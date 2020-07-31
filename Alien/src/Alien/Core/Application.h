@@ -4,6 +4,7 @@
 #include "Alien/Core/LayerStack.h"
 #include "Alien/Core/TimeStep.h"
 #include "Alien/Events/ApplicationEvent.h"
+#include "Alien/Renderer/Renderer.h"
 
 #include "Alien/ImGui/ImGuiLayer.h"
 
@@ -17,7 +18,7 @@ namespace Alien {
 
 		void Run();
 
-		virtual void OnInit() {}
+		virtual void OnInit() { }
 		virtual void OnShutdown() {}
 		virtual void OnUpdate() {}
 

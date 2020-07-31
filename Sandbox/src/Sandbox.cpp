@@ -7,6 +7,7 @@
 
 #include "Alien/Core/Base.h"
 #include "Alien/Renderer/Renderer.h"
+#include "Alien/Renderer/RendererAPI.h"
 #include "Alien/Renderer/Shader.h"
 #include "Alien/Renderer/Buffer.h"
 #include "Alien/Renderer/VertexArray.h"
@@ -17,7 +18,11 @@ class ExampleLayer : public Alien::Layer
 public:
 	ExampleLayer() :Layer("Example") 
 	{
-		m_VertexArray.reset(Alien::VertexArray::Create());
+	}
+
+	void OnAttach() override
+	{
+		m_VertexArrayTriangle.reset(Alien::VertexArray::Create());
 
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -25,25 +30,23 @@ public:
 			0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f
 		};
 
-		Alien::Ref<Alien::VertexBuffer> vertexBuffer;
-		vertexBuffer.reset(Alien::VertexBuffer::Create());
-		vertexBuffer->SetData(vertices, sizeof(vertices), 7);
+		m_VertexBufferTriangle.reset(Alien::VertexBuffer::Create());
+		m_VertexBufferTriangle->SetData(vertices, sizeof(vertices), 7);
 
 		Alien::BufferLayout layout = {
 			{ Alien::ShaderDataType::Float3, "a_Position" },
 			{ Alien::ShaderDataType::Float4, "a_Color" }
 		};
-		vertexBuffer->SetLayout(layout);
-		m_VertexArray->AddVertexBuffer(vertexBuffer);
+		m_VertexBufferTriangle->SetLayout(layout);
+		m_VertexArrayTriangle->AddVertexBuffer(m_VertexBufferTriangle);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		Alien::Ref<Alien::IndexBuffer> indexBuffer;
-		indexBuffer.reset(Alien::IndexBuffer::Create());
-		indexBuffer->SetData(indices, sizeof(indices));
+		m_IndexBufferTriangle.reset(Alien::IndexBuffer::Create());
+		m_IndexBufferTriangle->SetData(indices, sizeof(indices));
 
-		m_VertexArray->SetIndexBuffer(indexBuffer);
+		m_VertexArrayTriangle->SetIndexBuffer(m_IndexBufferTriangle);
 
-		m_SquareVA.reset(Alien::VertexArray::Create());
+		m_VertexArraySquare.reset(Alien::VertexArray::Create());
 
 		float squareVertices[3 * 4] = {
 			-0.5f, -0.5f, 0.0f,
@@ -52,20 +55,18 @@ public:
 			-0.5f, 0.5f, 0.0f
 		};
 
-		Alien::Ref<Alien::VertexBuffer> squareVB;
-		squareVB.reset(Alien::VertexBuffer::Create());
-		squareVB->SetData(squareVertices, sizeof(squareVertices));
+		m_VertexBufferSquare.reset(Alien::VertexBuffer::Create());
+		m_VertexBufferSquare->SetData(squareVertices, sizeof(squareVertices));
 
-		squareVB->SetLayout({
+		m_VertexBufferSquare->SetLayout({
 			{ Alien::ShaderDataType::Float3, "a_Position" }
 			});
-		m_SquareVA->AddVertexBuffer(squareVB);
+		m_VertexArraySquare->AddVertexBuffer(m_VertexBufferSquare);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		Alien::Ref<Alien::IndexBuffer> squareIB;
-		squareIB.reset(Alien::IndexBuffer::Create());
-		squareIB->SetData(squareIndices, sizeof(squareIndices));
-		m_SquareVA->SetIndexBuffer(squareIB);
+		m_IndexBufferSquare.reset(Alien::IndexBuffer::Create());
+		m_IndexBufferSquare->SetData(squareIndices, sizeof(squareIndices));
+		m_VertexArraySquare->SetIndexBuffer(m_IndexBufferSquare);
 
 		std::string vertexSrc = R"(
 			#version 330 core
@@ -99,7 +100,7 @@ public:
 			}
 		)";
 
-		m_Shader=Alien::Shader::Create("Shader1", vertexSrc, fragmentSrc);
+		m_ShaderTriangle = Alien::Shader::Create("Shader1", vertexSrc, fragmentSrc);
 
 
 		std::string blueShaderVertexSrc = R"(
@@ -132,23 +133,24 @@ public:
 			}
 		)";
 
-		m_BlueShader= Alien::Shader::Create("Shader2", blueShaderVertexSrc, blueShaderFragmentSrc);
+		m_ShaderSquare = Alien::Shader::Create("Shader2", blueShaderVertexSrc, blueShaderFragmentSrc);
+
+
 	}
 
 	void OnUpdate() override
 	{
-		
-		Alien::RenderCommand::SetClearColor(glm::vec4( 0.1f, 0.1f, 0.1f, 1 ));
-		Alien::RenderCommand::Clear();
+		Alien::Renderer::SetClearColor(glm::vec4( 0.1f, 0.1f, 0.1f, 1 ));
+		Alien::Renderer::Clear();
 
 		Alien::Renderer::BeginScene();
 
-		m_BlueShader->Bind();
-		m_BlueShader->SetFloat3("u_Color", m_SquareColor);
-		Alien::Renderer::Submit(m_SquareVA);
+		m_ShaderSquare->Bind();
+		m_ShaderSquare->SetFloat3("u_Color", m_ColorSquare);
+		Alien::Renderer::Draw(m_VertexArraySquare);
 
-		m_Shader->Bind();
-		Alien::Renderer::Submit(m_VertexArray);
+		m_ShaderTriangle->Bind();
+		Alien::Renderer::Draw(m_VertexArrayTriangle);
 
 		Alien::Renderer::EndScene();
 	}
@@ -156,7 +158,7 @@ public:
 	void OnImGuiRender()
 	{
 		ImGui::Begin("ColorPicker");
-		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_ColorSquare));
 
 		ImGui::End();
 	}
@@ -171,13 +173,17 @@ public:
 	}
 
 private:
-	Alien::Ref<Alien::Shader> m_Shader;
-	Alien::Ref<Alien::VertexArray> m_VertexArray;
+	Alien::Ref<Alien::VertexBuffer> m_VertexBufferTriangle;
+	Alien::Ref<Alien::IndexBuffer> m_IndexBufferTriangle;
+	Alien::Ref<Alien::VertexArray> m_VertexArrayTriangle;
+	Alien::Ref<Alien::Shader> m_ShaderTriangle;
 
-	Alien::Ref<Alien::Shader> m_BlueShader;
-	Alien::Ref<Alien::VertexArray> m_SquareVA;
+	Alien::Ref<Alien::VertexBuffer> m_VertexBufferSquare;
+	Alien::Ref<Alien::IndexBuffer> m_IndexBufferSquare;
+	Alien::Ref<Alien::VertexArray> m_VertexArraySquare;
+	Alien::Ref<Alien::Shader> m_ShaderSquare;
 
-	glm::vec3 m_SquareColor = glm::vec3( .2f, .3f, .8f);
+	glm::vec3 m_ColorSquare = glm::vec3( .2f, .3f, .8f);
 };
 
 
