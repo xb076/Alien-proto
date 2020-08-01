@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Application.h"
 
-
 #include "imgui/imgui.h"
 #include <glad/glad.h>
 
@@ -83,13 +82,15 @@ namespace Alien {
 
 			//glClearColor(1, 0, 1, 1);
 			//glClear(GL_COLOR_BUFFER_BIT);
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate();
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				ALIEN_RENDER_S({ self->RenderImGui(); });
 
-			ALIEN_RENDER_S({ self->RenderImGui(); });
-
-			Renderer::WaitAndRender();
+				Renderer::WaitAndRender();
+			}
 
 			m_Window->OnUpdate();
 		}
@@ -112,6 +113,15 @@ namespace Alien {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
 		return false;
 	}
 
@@ -121,5 +131,10 @@ namespace Alien {
 		return true;
 	}
 
-
+	void Application::Close()
+	{
+		m_Running = false;
+	}
 }
+
+

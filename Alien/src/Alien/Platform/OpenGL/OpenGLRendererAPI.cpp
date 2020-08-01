@@ -45,6 +45,13 @@ namespace Alien {
 		});
 	}
 
+	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	{
+		ALIEN_RENDER_4(x, y, width, height, {
+			glViewport(x, y, width, height);
+		});
+	}
+
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
 	{
 		ALIEN_RENDER_1(vertexArray, {
