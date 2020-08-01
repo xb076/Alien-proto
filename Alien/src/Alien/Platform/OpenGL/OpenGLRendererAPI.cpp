@@ -5,10 +5,35 @@
 
 namespace Alien {
 
+
+	void OpenGLRendererAPI::Init()
+	{
+		ALIEN_RENDER({
+		//glDebugMessageCallback(OpenGLLogMessage, nullptr);
+		//glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		//glEnable(GL_DEPTH_TEST);
+		////glEnable(GL_CULL_FACE);
+		//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		//glFrontFace(GL_CCW);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		auto& caps = RendererAPI::GetCapabilities();
+
+		caps.Vendor = (const char*)glGetString(GL_VENDOR);
+		caps.Renderer = (const char*)glGetString(GL_RENDERER);
+		caps.Version = (const char*)glGetString(GL_VERSION);
+
+		//glGetIntegerv(GL_MAX_SAMPLES, &caps.MaxSamples);
+		//glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &caps.MaxAnisotropy);
+		});
+	}
+
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 	{
 		ALIEN_RENDER_1(color, {
-			ALIEN_CORE_INFO("OpenGLRendererAPI::SetClearColor()");
 			glClearColor(color.r, color.g, color.b, color.a);
 		});
 	}
@@ -16,7 +41,6 @@ namespace Alien {
 	void OpenGLRendererAPI::Clear()
 	{
 		ALIEN_RENDER({
-			ALIEN_CORE_INFO("OpenGLRendererAPI::Clear()");
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		});
 	}
@@ -24,7 +48,6 @@ namespace Alien {
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
 	{
 		ALIEN_RENDER_1(vertexArray, {
-			ALIEN_CORE_INFO("OpenGLRendererAPI::DrawIndexed(), count<{0}>", vertexArray->GetIndexBuffers()->GetCount());
 			glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffers()->GetCount(), GL_UNSIGNED_INT, nullptr);
 		});
 	}

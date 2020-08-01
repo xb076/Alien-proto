@@ -30,14 +30,12 @@ namespace Alien {
 	{
 		ALIEN_RENDER_S({
 			glCreateVertexArrays(1, &self->m_RendererID);
-			ALIEN_CORE_INFO("OpenGLVertexArray() m_RendererID<{0}>", self->m_RendererID);
 		});
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("~OpenGLVertexArray() m_RendererID<{0}>", self->m_RendererID);
 			glDeleteVertexArrays(1, &self->m_RendererID);
 		});
 	}
@@ -45,7 +43,6 @@ namespace Alien {
 	void OpenGLVertexArray::Bind() const
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("OpenGLVertexArray::Bind() m_RendererID<{0}>", self->m_RendererID);
 			if(self->m_RendererID)
 				glBindVertexArray(self->m_RendererID);
 			else
@@ -56,7 +53,6 @@ namespace Alien {
 	void OpenGLVertexArray::UnBind() const
 	{
 		ALIEN_RENDER({
-			ALIEN_CORE_INFO("OpenGLVertexArray::UnBind()");
 			glBindVertexArray(0);
 		});
 	}
@@ -69,7 +65,6 @@ namespace Alien {
 		vertexBuffer->Bind();
 
 		ALIEN_RENDER_1(vertexBuffer, {
-		ALIEN_CORE_INFO("OpenGLVertexArray::AddVertexBuffer()");
 		uint32_t index = 0;
 		const auto & layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)

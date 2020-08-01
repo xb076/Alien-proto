@@ -14,14 +14,12 @@ namespace Alien {
 	{
 		ALIEN_RENDER_S({
 			glCreateBuffers(1, &self->m_RendererID);
-			ALIEN_CORE_INFO("OpenGLVertexBuffer() m_RendererID<{0}>", self->m_RendererID);
 		});
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("~OpenGLVertexBuffer() m_RendererID<{0}", self->m_RendererID);
 			glDeleteBuffers(1, &self->m_RendererID);
 		});
 
@@ -38,7 +36,6 @@ namespace Alien {
 
 
 		ALIEN_RENDER_S2(size, offset, {
-			ALIEN_CORE_INFO("OpenGLVertexBuffer::SetData() m_RendererID<{0}>, size<{1}>", self->m_RendererID, size);
 			glBindBuffer(GL_ARRAY_BUFFER, self->m_RendererID);
 			glBufferData(GL_ARRAY_BUFFER, size, self->m_Buffer.get(), GL_STATIC_DRAW);
 		});
@@ -47,7 +44,6 @@ namespace Alien {
 	void OpenGLVertexBuffer::Bind() const
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("OpenGLVertexBuffer::Bind() m_RendererID<{0}>", self->m_RendererID);
 			if(self->m_RendererID)
 				glBindBuffer(GL_ARRAY_BUFFER, self->m_RendererID);
 			else
@@ -70,14 +66,12 @@ namespace Alien {
 	{
 		ALIEN_RENDER_S({
 			glCreateBuffers(1, &self->m_RendererID);
-			ALIEN_CORE_INFO("OpenGLIndexBuffer() m_RendererID<{0}>", self->m_RendererID);
 		});
 	}
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("~OpenGLIndexBuffer() m_RendererID<{0}>", self->m_RendererID);
 			glDeleteBuffers(1, &self->m_RendererID);
 		});
 
@@ -93,7 +87,6 @@ namespace Alien {
 		memcpy(m_Buffer.get(), buffer, size);
 
 		ALIEN_RENDER_S2(size, offset, {
-			ALIEN_CORE_INFO("OpenGLIndexBuffer::SetData() m_RendererID<{0}>", self->m_RendererID);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->m_RendererID);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, self->m_Buffer.get(), GL_STATIC_DRAW);
 		});
@@ -102,7 +95,6 @@ namespace Alien {
 	void OpenGLIndexBuffer::Bind() const
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("OpenGLIndexBuffer::Bind() m_RendererID<{0}>", self->m_RendererID);
 			if (self->m_RendererID)
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->m_RendererID);
 			else
@@ -113,7 +105,6 @@ namespace Alien {
 	void OpenGLIndexBuffer::UnBind() const
 	{
 		ALIEN_RENDER({
-			ALIEN_CORE_INFO("OpenGLIndexBuffer::UnBind()");
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		});
 	}

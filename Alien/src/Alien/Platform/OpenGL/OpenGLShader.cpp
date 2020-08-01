@@ -32,7 +32,6 @@ namespace Alien {
 				glDeleteShader(self->m_RendererID);
 
 			self->Compile(shaderSources);
-			ALIEN_CORE_INFO("OpenGLShader() m_RendererID<{0}>", self->m_RendererID);
 		});
 
 		//  assets/shaders/Texture.glsl
@@ -58,7 +57,6 @@ namespace Alien {
 				glDeleteShader(self->m_RendererID);
 
 			self->Compile(sources);
-			ALIEN_CORE_INFO("OpenGLShader() m_RendererID<{0}>", self->m_RendererID);
 		});
 
 	}
@@ -66,7 +64,6 @@ namespace Alien {
 	OpenGLShader::~OpenGLShader()
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("~OpenGLShader() m_RendererID<{0}>", self->m_RendererID);
 			glDeleteProgram(self->m_RendererID);
 		
 		});
@@ -75,7 +72,6 @@ namespace Alien {
 	void OpenGLShader::Bind() const
 	{
 		ALIEN_RENDER_S({
-			ALIEN_CORE_INFO("OpenGLShader::Bind() m_RendererID<{0}>", self->m_RendererID);
 			if(self->m_RendererID)
 				glUseProgram(self->m_RendererID);
 			else
@@ -86,7 +82,6 @@ namespace Alien {
 	void OpenGLShader::UnBind() const
 	{
 		ALIEN_RENDER({
-			ALIEN_CORE_INFO("OpenGLShader::UnBind()");
 			glUseProgram(0);
 		});
 	}
@@ -115,7 +110,6 @@ namespace Alien {
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
 		ALIEN_RENDER_S2(name, value, {
-			ALIEN_CORE_INFO("OpenGLShader::SetFloat3, m_RendererID<{0}>", self->m_RendererID);
 			self->UploadUniformFloat3(name, value);
 		});
 	}

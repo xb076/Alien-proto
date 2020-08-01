@@ -22,6 +22,8 @@ namespace Alien {
 		s_Data.m_RendererAPI.reset(RendererAPI::Create());
 		s_Data.m_ShaderLibrary = CreateScope<ShaderLibrary>();
 		s_Data.m_CommandQueue = CreateScope<RenderCommandQueue>();
+
+		s_Data.m_RendererAPI->Init();
 	}
 
 	void Renderer::BeginScene()

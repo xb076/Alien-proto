@@ -8,54 +8,13 @@
 
 namespace Alien {
 
-
-	template<typename Fn>
-	class Timer
-	{
-	public:
-		Timer(const char* name, Fn&& func)
-			: m_Name(name), m_Stopped(false), m_Func(func)
-		{
-			m_StartTimepoint = std::chrono::high_resolution_clock::now();
-		}
-
-		~Timer()
-		{
-			if (!m_Stopped)
-				Stop();
-		}
-
-		void Stop()
-		{
-			auto endTimepoint = std::chrono::high_resolution_clock::now();
-
-			long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-			long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
-
-			m_Stopped = true;
-
-			float duration = (end - start) * 0.001f;
-			//float duration = std::chrono::duration_cast<std::chrono::microseconds>(endTimepoint - m_StartTimepoint).count() * 0.001f;
-			m_Func({ m_Name, duration });
-		}
-
-	private:
-		const char* m_Name;
-		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
-		bool m_Stopped;
-		Fn m_Func;
-	};
-
-#define PROFILE_SCOPE(name) Timer timer##__LINE__(name, [&](ProfileResult profileResult) {m_ProfileResults.push_back(profileResult); })
-
-
-
 #define BIND_EVENT_FN_APPLICATION(fn) std::bind(&Application::##fn, this, std::placeholders::_1)
 
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
 	{
+		m_Timer.reset(new Timer());
 		s_Instance = this;
 
 		m_Window = Scope<Window>(Window::Create());
@@ -84,12 +43,39 @@ namespace Alien {
 		layer->OnAttach();
 	}
 
+	void Application::RenderImGui()
+	{
+		m_ImGuiLayer->Begin();
+
+		ImGui::Begin("Renderer");
+		auto& caps = RendererAPI::GetCapabilities();
+		ImGui::Text("Vendor: %s", caps.Vendor.c_str());
+		ImGui::Text("Renderer: %s", caps.Renderer.c_str());
+		ImGui::Text("Version: %s", caps.Version.c_str());
+
+		char label[64];
+		strcpy(label, "%.3fms ");
+		strcat(label, "Frame Time");
+		float frameTime = m_Timer->GetMilliSeconds();
+		ImGui::Text(label, frameTime);
+		memset(label, 0, 64);
+		strcpy(label, "%.0f ");
+		strcat(label, "Frame per Second");
+		ImGui::Text(label, 1000/frameTime);
+		ImGui::End();
+
+		for (Layer* layer : m_LayerStack)
+			layer->OnImGuiRender();
+
+		m_ImGuiLayer->End();
+	}
+
 	void Application::Run()
 	{
 		OnInit();
 		while (m_Running)
 		{
-			PROFILE_SCOPE("Application::Run()");//, [&](auto profileResult) {m_ProfileResults.push_back(profileResult); });
+			//PROFILE_SCOPE("Application::Run()");//, [&](auto profileResult) {m_ProfileResults.push_back(profileResult); });
 
 			/*float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
@@ -101,27 +87,10 @@ namespace Alien {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
+			ALIEN_RENDER_S({ self->RenderImGui(); });
+
 			Renderer::WaitAndRender();
 
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
-				layer->OnImGuiRender();
-
-			ImGui::Begin("Performance");
-			for (auto& result : m_ProfileResults)
-			{
-				char label[50];
-				strcpy(label, "%.3fms ");
-				strcat(label, result.Name);
-				ImGui::Text(label, result.Time);
-			}
-			m_ProfileResults.clear();
-			ImGui::End();
-
-			m_ImGuiLayer->End();
-
-			
-			
 			m_Window->OnUpdate();
 		}
 		OnShutdown();
