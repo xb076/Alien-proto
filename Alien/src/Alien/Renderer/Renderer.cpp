@@ -50,6 +50,11 @@ namespace Alien {
 		s_Data.m_RendererAPI->DrawIndexed(vertexArray);
 	}
 
+	void Renderer::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count /*= 0*/)
+	{
+		s_Data.m_RendererAPI->DrawIndexed(vertexArray, count);
+	}
+
 	void* Renderer::Submit(RenderCommandFn fn, unsigned int size)
 	{
 		return s_Data.m_CommandQueue->Allocate(fn, size);

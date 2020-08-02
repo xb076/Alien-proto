@@ -7,7 +7,7 @@ namespace Alien {
 	class WindowsInput : public Input
 	{
 	protected:
-		virtual bool IsKeyPressedImpl(int keycode);
+		virtual bool IsKeyPressedImpl(KeyCode keycode);
 
 		virtual bool IsMouseButtonPressedImpl(int button);
 		virtual float GetMouseXImpl();

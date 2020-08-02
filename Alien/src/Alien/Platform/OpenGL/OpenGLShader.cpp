@@ -95,8 +95,11 @@ namespace Alien {
 
 	void OpenGLShader::SetIntArray(const std::string& name, uint32_t* values, uint32_t count)
 	{
-		ALIEN_RENDER_S3(name, values, count, {
-			self->UploadUniformIntArray(name, values, count);
+		m_IntArrayValues.reset(new uint32_t[count]);
+		memcpy(m_IntArrayValues.get(), values, count * sizeof(uint32_t));
+
+		ALIEN_RENDER_S2(name, count, {
+			self->UploadUniformIntArray(name, self->m_IntArrayValues.get(), count);
 		});
 	}
 

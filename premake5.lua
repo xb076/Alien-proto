@@ -55,8 +55,8 @@ project "Alien"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.spdlog}",
-		"%{prj.name}/vendor/assimp/include",
-		"%{prj.name}/vendor/stb/include"
+		"%{IncludeDir.stb_image}",
+		"%{prj.name}/vendor/assimp/include"
 	}
 	
 	links 
@@ -116,7 +116,8 @@ project "Editor"
 		"Alien/vendor/spdlog/include",
 		"Alien/src",
 		"Alien/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links

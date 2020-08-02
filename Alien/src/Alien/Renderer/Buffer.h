@@ -105,14 +105,16 @@ namespace Alien {
 	public:
 		virtual ~VertexBuffer() = default;
 
-		virtual void SetData(void* buffer, uint32_t size, uint32_t offset = 0) = 0;
+		//virtual void SetData(void* buffer, uint32_t size, uint32_t offset = 0) = 0;
 		virtual void Bind() const = 0;
 		virtual void UnBind() const = 0;
 
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
+		virtual void SetData(const void* data, uint32_t size) = 0;
 
-		static VertexBuffer* Create();
+		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 
 		Ref<char> m_Buffer;
 	};
@@ -122,13 +124,13 @@ namespace Alien {
 	public:
 		virtual ~IndexBuffer() = default;
 
-		virtual void SetData(void* buffer, uint32_t size, uint32_t offset = 0) = 0;
+		//virtual void SetData(void* buffer, uint32_t size, uint32_t offset = 0) = 0;
 		virtual void Bind() const = 0;
 		virtual void UnBind() const = 0;
 
 		virtual uint32_t GetCount() const = 0;
 
-		static IndexBuffer* Create();
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 
 		Ref<char> m_Buffer;
 	};

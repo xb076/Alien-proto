@@ -14,6 +14,12 @@
 #include "Alien/Renderer/Framebuffer.h"
 
 
+// ---Entry Point------------
+#include "Alien/Core/EntryPoint.h"
+// --------------------------
+
+
+
 class ExampleLayer : public Alien::Layer
 {
 public:
@@ -36,8 +42,8 @@ public:
 			0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f
 		};
 
-		m_VertexBufferTriangle.reset(Alien::VertexBuffer::Create());
-		m_VertexBufferTriangle->SetData(vertices, sizeof(vertices), 7);
+		m_VertexBufferTriangle=Alien::VertexBuffer::Create(vertices, sizeof(vertices));
+		//m_VertexBufferTriangle->SetData(vertices, sizeof(vertices), 7);
 
 		Alien::BufferLayout layout = {
 			{ Alien::ShaderDataType::Float3, "a_Position" },
@@ -47,8 +53,7 @@ public:
 		m_VertexArrayTriangle->AddVertexBuffer(m_VertexBufferTriangle);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		m_IndexBufferTriangle.reset(Alien::IndexBuffer::Create());
-		m_IndexBufferTriangle->SetData(indices, sizeof(indices));
+		m_IndexBufferTriangle=Alien::IndexBuffer::Create(indices, sizeof(indices));
 
 		m_VertexArrayTriangle->SetIndexBuffer(m_IndexBufferTriangle);
 
@@ -61,8 +66,7 @@ public:
 			-0.5f, 0.5f, 0.0f
 		};
 
-		m_VertexBufferSquare.reset(Alien::VertexBuffer::Create());
-		m_VertexBufferSquare->SetData(squareVertices, sizeof(squareVertices));
+		m_VertexBufferSquare=Alien::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 
 		m_VertexBufferSquare->SetLayout({
 			{ Alien::ShaderDataType::Float3, "a_Position" }
@@ -70,8 +74,7 @@ public:
 		m_VertexArraySquare->AddVertexBuffer(m_VertexBufferSquare);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		m_IndexBufferSquare.reset(Alien::IndexBuffer::Create());
-		m_IndexBufferSquare->SetData(squareIndices, sizeof(squareIndices));
+		m_IndexBufferSquare=Alien::IndexBuffer::Create(squareIndices, sizeof(squareIndices));
 		m_VertexArraySquare->SetIndexBuffer(m_IndexBufferSquare);
 
 		std::string vertexSrc = R"(
@@ -144,7 +147,7 @@ public:
 
 	}
 
-	void OnUpdate() override
+	void OnUpdate(float deltaTime) override
 	{
 		m_Framebuffer->Bind();
 		Alien::Renderer::SetClearColor(glm::vec4( 0.1f, 0.1f, 0.1f, 1 ));

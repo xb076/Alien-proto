@@ -7,11 +7,12 @@
 #include <GLFW/glfw3.h>
 
 namespace Alien {
+	Input* Input::s_Instance = new WindowsInput();
 
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	bool WindowsInput::IsKeyPressedImpl(KeyCode keycode)
 	{
 		auto& window = static_cast<WindowsWindow&>(Application::Get().GetWindow());
-		auto state = glfwGetKey(static_cast<GLFWwindow*>(window.GetNativeWindow()), keycode);
+		auto state = glfwGetKey(static_cast<GLFWwindow*>(window.GetNativeWindow()), (int)keycode);
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 

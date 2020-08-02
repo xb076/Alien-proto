@@ -59,6 +59,7 @@ namespace Alien {
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:
 		Scope<Timer> m_Timer;
+		float m_FrameTimeSec;
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;

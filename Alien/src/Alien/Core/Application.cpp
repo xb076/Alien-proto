@@ -55,12 +55,11 @@ namespace Alien {
 		char label[64];
 		strcpy(label, "%.3fms ");
 		strcat(label, "Frame Time");
-		float frameTime = m_Timer->GetMilliSeconds();
-		ImGui::Text(label, frameTime);
+		ImGui::Text(label, m_FrameTimeSec*1000);
 		memset(label, 0, 64);
 		strcpy(label, "%.0f ");
 		strcat(label, "Frame per Second");
-		ImGui::Text(label, 1000/frameTime);
+		ImGui::Text(label, 1/ m_FrameTimeSec);
 		ImGui::End();
 
 		for (Layer* layer : m_LayerStack)
@@ -74,6 +73,7 @@ namespace Alien {
 		OnInit();
 		while (m_Running)
 		{
+			m_FrameTimeSec = m_Timer->GetMilliSeconds() / 1000;
 			//PROFILE_SCOPE("Application::Run()");//, [&](auto profileResult) {m_ProfileResults.push_back(profileResult); });
 
 			/*float time = (float)glfwGetTime();
@@ -85,7 +85,7 @@ namespace Alien {
 			if (!m_Minimized)
 			{
 				for (Layer* layer : m_LayerStack)
-					layer->OnUpdate();
+					layer->OnUpdate(m_FrameTimeSec);
 
 				ALIEN_RENDER_S({ self->RenderImGui(); });
 

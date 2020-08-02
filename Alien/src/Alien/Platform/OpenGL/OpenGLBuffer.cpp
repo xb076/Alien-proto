@@ -10,6 +10,107 @@ namespace Alien {
 	// VertexBuffer //////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////
 
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	{
+		ALIEN_RENDER_S1(size, {
+			glCreateBuffers(1, &self->m_RendererID);
+			glBindBuffer(GL_ARRAY_BUFFER, self->m_RendererID);
+			glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+			});
+	}
+
+	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
+	{
+		m_Buffer.reset(new char[size]);
+		memcpy(m_Buffer.get(), vertices, size);
+
+		ALIEN_RENDER_S1(size, {
+			glCreateBuffers(1, &self->m_RendererID);
+			glBindBuffer(GL_ARRAY_BUFFER, self->m_RendererID);
+			glBufferData(GL_ARRAY_BUFFER, size, self->m_Buffer.get(), GL_STATIC_DRAW);
+			});
+
+	}
+
+	OpenGLVertexBuffer::~OpenGLVertexBuffer()
+	{
+		ALIEN_RENDER_S({
+			glDeleteBuffers(1, &self->m_RendererID);
+			});
+	}
+
+	void OpenGLVertexBuffer::Bind() const
+	{
+		ALIEN_RENDER_S({
+			glBindBuffer(GL_ARRAY_BUFFER, self->m_RendererID);
+			});
+	}
+
+	void OpenGLVertexBuffer::UnBind() const
+	{
+		ALIEN_RENDER({
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			});
+	}
+
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		m_Buffer.reset(new char[size]);
+		memcpy(m_Buffer.get(), data, size);
+
+		ALIEN_RENDER_S1(size, {
+			glBindBuffer(GL_ARRAY_BUFFER, self->m_RendererID);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, size, self->m_Buffer.get());
+			});
+	}
+
+	/////////////////////////////////////////////////////////////
+	// IndexBuffer //////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
+		: m_Count(count)
+	{
+		int size = count * sizeof(uint32_t);
+		m_Buffer.reset(new char[size]);
+		memcpy(m_Buffer.get(), indices, size);
+
+		ALIEN_RENDER_S1(count, {
+			glCreateBuffers(1, &self->m_RendererID);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->m_RendererID);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), self->m_Buffer.get(), GL_STATIC_DRAW);
+			});
+
+	}
+
+	OpenGLIndexBuffer::~OpenGLIndexBuffer()
+	{
+		ALIEN_RENDER_S({
+			glDeleteBuffers(1, &self->m_RendererID);
+			});
+	}
+
+	void OpenGLIndexBuffer::Bind() const
+	{
+		ALIEN_RENDER_S({
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->m_RendererID);
+			});
+	}
+
+	void OpenGLIndexBuffer::UnBind() const
+	{
+		ALIEN_RENDER({
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			});
+	}
+
+
+
+#if 0
+	/////////////////////////////////////////////////////////////
+	// VertexBuffer //////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+
 	OpenGLVertexBuffer::OpenGLVertexBuffer() : m_RendererID(0), m_Size(0)
 	{
 		ALIEN_RENDER_S({
@@ -108,7 +209,7 @@ namespace Alien {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		});
 	}
-
+#endif
 }
 
 

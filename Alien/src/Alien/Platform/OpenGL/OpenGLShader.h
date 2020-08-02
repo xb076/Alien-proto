@@ -38,6 +38,7 @@ namespace Alien {
 	private:
 		uint32_t m_RendererID;
 		std::string m_Name;
+		Ref<uint32_t> m_IntArrayValues;
 
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);

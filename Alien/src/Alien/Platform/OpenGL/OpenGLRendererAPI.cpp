@@ -52,11 +52,20 @@ namespace Alien {
 		});
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
+	//void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
+	//{
+	//	ALIEN_RENDER_1(vertexArray, {
+	//		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffers()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	//	});
+	//}
+
+	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
-		ALIEN_RENDER_1(vertexArray, {
-			glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffers()->GetCount(), GL_UNSIGNED_INT, nullptr);
-		});
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffers()->GetCount();
+
+		ALIEN_RENDER_1(count, {
+			glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+			});
 	}
 
 
