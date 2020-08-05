@@ -4,9 +4,10 @@
 [submodule "Alien/vendor/imgui"]
 	path = Alien/vendor/imgui
 	url = https://github.com/xb076/imgui
+	branch = docking
 [submodule "Alien/vendor/glm"]
 	path = Alien/vendor/glm
-	url = https://github.com/xb076/glm-deprecated
+	url = https://github.com/g-truc/glm
 [submodule "Alien/vendor/spdlog"]
 	path = Alien/vendor/spdlog
 	url = https://github.com/gabime/spdlog
